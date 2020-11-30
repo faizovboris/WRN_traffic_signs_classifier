@@ -87,6 +87,7 @@ if __name__ == '__main__':
                         help='Path to icons, need only to create index from icons')
     parser.add_argument('--train_type', choices=['all_classes', 'often_classes'], help='Experiment type')
     parser.add_argument('--use_existing_index', action='store_true', help='Do not create new index')
+    parser.add_argument('--train_only_heads', action='store_true', help='Train only heads')
     parser.add_argument('--replication_factor', type=int, default=15, help='Replication factor for index')
     parser.add_argument('--heads', type=str, default='[["icon", 1, 1], ["test", 1, 1], ["synt", 1, 1], ["synt", 5, 3], ["synt", 10, 5]]',
                         help='Necessary heads with random forest and kNN in format \'[(index_type, index_pictures_per_class, knn_neighbors)]\'')
@@ -102,8 +103,12 @@ if __name__ == '__main__':
         data_folders.append(args.synt_path)
     train_filelist = get_list_of_files(args.exp_name, data_folders, classes_often + classes_rare if args.train_type == 'all_classes' else classes_often)
 
-    model = train_model(train_filelist, config, classes, classes_rare)
-    model.save(args.exp_name + "_" + args.nn_model)
+    if args.train_only_heads:
+        model = prepare_model(config)
+        model.load_weights(args.exp_name + "_" + args.nn_model)
+    else:
+        model = train_model(train_filelist, config, classes, classes_rare)
+        model.save(args.exp_name + "_" + args.nn_model)
 
     img_shape = (config['img']['img_size'], config['img']['img_size'], 3)
 

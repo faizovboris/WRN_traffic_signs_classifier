@@ -8,7 +8,7 @@ from keras.utils import to_categorical
 
 
 def create_synt_index(exp_name, data_folder, use_existing_index, pic_cnt=1):
-    index_file = exp_name + "_" + data_folder.split('/')[-1] + ".index"
+    index_file = exp_name + "_" + data_folder.split('/')[-1] + "_" + str(pic_cnt) + ".index"
     if use_existing_index:
         return index_file
     with open(index_file, 'w') as index:
